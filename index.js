@@ -41,10 +41,24 @@ async function run() {
     });
 
     // Store User Info
-    app.post("/user", async (req, res) => {
-      const userInfo = req.body;
-      console.log(userInfo);
-      const result = await userCollection.insertOne(userInfo);
+    app.put("/user/:email", async (req, res) => {
+      const email = req.params?.email;
+      const user = req.body;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updatedUser = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updatedUser,
+        options
+      );
+      //  const token = jwt.sign(
+      //    { email: email },
+      //    process.env.ACCESS_TOKEN_SECRET,
+      //    { expiresIn: "1h" }
+      //  );
       res.send(result);
     });
 
