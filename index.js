@@ -40,6 +40,14 @@ async function run() {
       }
     });
 
+    // Store User Info
+    app.post("/user", async (req, res) => {
+      const userInfo = req.body;
+      console.log(userInfo);
+      const result = await userCollection.insertOne(userInfo);
+      res.send(result);
+    });
+
     // parts api
     app.get("/parts", async (req, res) => {
       const result = (
