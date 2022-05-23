@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -22,6 +24,20 @@ async function run() {
     const partsCollection = client.db("RinspeedCar").collection("parts");
     const orderCollection = client.db("RinspeedCar").collection("orders");
     console.log("db connected");
+
+    // STRIPE PAYMENT
+    app.post("/create-payment", async (req, res) => {
+      const { totalPrice } = req?.body;
+      if (totalPrice) {
+        const amount = totalPrice * 100;
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: "usd",
+          payment_method_types: ["card"],
+        });
+        return res.send({ clientSecret: paymentIntent.client_secret });
+      }
+    });
 
     // parts api
     app.get("/parts", async (req, res) => {
@@ -65,12 +81,9 @@ async function run() {
     // GET Single Order
     app.get("/payment/:orderId", async (req, res) => {
       const { orderId } = req.params;
-      console.log(orderId);
       const filter = { _id: ObjectId(orderId) };
       const result = await orderCollection.findOne(filter);
       res.send(result);
-
-
     });
   } finally {
     // await client.close();
