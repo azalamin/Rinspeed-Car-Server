@@ -62,6 +62,15 @@ async function run() {
       const result = await orderCollection.deleteOne(filter);
       res.send(result);
     });
+
+    // GET Single Order
+    app.get("/payment/:orderId", async (req, res) => {
+      const { orderId } = req.params;
+      console.log(orderId);
+      const filter = { _id: ObjectId(orderId) };
+      const result = await orderCollection.findOne(filter);
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
