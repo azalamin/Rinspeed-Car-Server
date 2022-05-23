@@ -21,9 +21,10 @@ async function run() {
     await client.connect();
     const userCollection = client.db("RinspeedCar").collection("user");
     const partsCollection = client.db("RinspeedCar").collection("parts");
-    const orderCollection = client.db("RinspeedCar").collection("order");
+    const orderCollection = client.db("RinspeedCar").collection("orders");
     console.log("db connected");
 
+    // parts api
     app.get("/parts", async (req, res) => {
       const result = (
         await partsCollection.find().limit(6).toArray()
@@ -37,6 +38,14 @@ async function run() {
       const result = await partsCollection.findOne(query);
       res.send(result);
     });
+
+    // orders api
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.send(result);
+    });
+    
   } finally {
     // await client.close();
   }
