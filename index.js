@@ -39,13 +39,29 @@ async function run() {
       res.send(result);
     });
 
-    // orders api
+    //* orders api //
+    //POST ORDER
     app.post("/orders", async (req, res) => {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
       res.send(result);
     });
-    
+
+    // GET Single Order
+    app.get("/orders/:email", async (req, res) => {
+      const { email } = req.params;
+      const query = { email: email };
+      const result = (await orderCollection.find(query).toArray()).reverse();
+      res.send(result);
+    });
+
+    // DELETE Single Order
+    app.delete("/orders/:orderId", async (req, res) => {
+      const { orderId } = req.params;
+      const filter = { _id: ObjectId(orderId) };
+      const result = await orderCollection.deleteOne(filter);
+      res.send(result);
+    });
   } finally {
     // await client.close();
   }
