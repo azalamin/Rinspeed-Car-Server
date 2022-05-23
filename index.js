@@ -21,6 +21,7 @@ async function run() {
   try {
     await client.connect();
     const userCollection = client.db("RinspeedCar").collection("user");
+    const paymentCollection = client.db("RinspeedCar").collection("payment");
     const partsCollection = client.db("RinspeedCar").collection("parts");
     const orderCollection = client.db("RinspeedCar").collection("orders");
     console.log("db connected");
@@ -59,6 +60,24 @@ async function run() {
     app.post("/orders", async (req, res) => {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
+      res.send(result);
+    });
+
+    // UPDATE PAYMENT
+    app.patch("/payment-update/:id", async (req, res) => {
+      const payment = req.body;
+      const { id } = req.params;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: { paid: true, transactionId: payment.transactionId },
+      };
+      const options = { upsert: true };
+      const paymentResult = await paymentCollection.insertOne(payment);
+      const result = await orderCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
       res.send(result);
     });
 
