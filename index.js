@@ -113,9 +113,14 @@ async function run() {
 
     // parts api
     app.get("/parts", async (req, res) => {
-      const result = (
-        await partsCollection.find().limit(6).toArray()
-      ).reverse();
+      const result = (await partsCollection.find().toArray()).reverse();
+      res.send(result);
+    });
+
+    //POST ORDER
+    app.post("/post-part", async (req, res) => {
+      const parts = req.body;
+      const result = await partsCollection.insertOne(parts);
       res.send(result);
     });
 
