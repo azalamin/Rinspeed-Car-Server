@@ -63,11 +63,37 @@ async function run() {
       res.send(result);
     });
 
+    // Make Admin
+    app.patch("/user/:email", async (req, res) => {
+      const email = req.params?.email;
+      const filter = { email: email };
+      const options = { upsert: true };
+      const updatedUser = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updatedUser,
+        options
+      );
+      res.send(result);
+    });
+
     // SIngle user api
     app.get("/user/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const result = await userCollection.findOne(query);
+      res.send(result);
+    });
+
+    // Get Users
+    app.get("/user", async (req, res) => {
+      const result = (
+        await userCollection.find().toArray()
+      ).reverse();
       res.send(result);
     });
 
