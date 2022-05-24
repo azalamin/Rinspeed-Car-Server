@@ -33,18 +33,6 @@ const verifyJWT = (req, res, next) => {
   });
 };
 
-const verifyAdmin = async (req, res, next) => {
-  const requester = req.decoded.email;
-  const requesterAccount = await userCollection.findOne({
-    email: requester,
-  });
-  if (requesterAccount.role === "admin") {
-    next();
-  } else {
-    res.status(403).send({ message: "Forbidden access" });
-  }
-};
-
 async function run() {
   try {
     await client.connect();
@@ -83,15 +71,15 @@ async function run() {
         updatedUser,
         options
       );
-       const token = jwt.sign(
-         { email: email },
-         process.env.ACCESS_TOKEN_SECRET,
-         { expiresIn: "1d" }
-       );
+      const token = jwt.sign(
+        { email: email },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "1d" }
+      );
       res.send({ result, accessToken: token });
     });
 
-    app.put("/user/admin/:email", verifyJWT, verifyAdmin, async (req, res) => {
+    app.put("/admin/:email", async (req, res) => {
       const email = req.params?.email;
       const filter = { email: email };
       const updatedUser = {
