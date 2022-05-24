@@ -24,6 +24,7 @@ async function run() {
     const paymentCollection = client.db("RinspeedCar").collection("payment");
     const partsCollection = client.db("RinspeedCar").collection("parts");
     const orderCollection = client.db("RinspeedCar").collection("orders");
+    const reviewCollection = client.db("RinspeedCar").collection("review");
     console.log("db connected");
 
     // STRIPE PAYMENT
@@ -124,6 +125,21 @@ async function run() {
       const { orderId } = req.params;
       const filter = { _id: ObjectId(orderId) };
       const result = await orderCollection.findOne(filter);
+      res.send(result);
+    });
+
+    // POST Review
+    app.post("/review", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.send(result);
+    });
+
+    // Get Reviews
+    app.get("/review", async (req, res) => {
+      const result = (
+        await reviewCollection.find().toArray()
+      ).reverse();
       res.send(result);
     });
   } finally {
