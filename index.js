@@ -63,6 +63,14 @@ async function run() {
       res.send(result);
     });
 
+    // SIngle user api
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await userCollection.findOne(query);
+      res.send(result);
+    });
+
     // parts api
     app.get("/parts", async (req, res) => {
       const result = (
@@ -137,9 +145,7 @@ async function run() {
 
     // Get Reviews
     app.get("/review", async (req, res) => {
-      const result = (
-        await reviewCollection.find().toArray()
-      ).reverse();
+      const result = (await reviewCollection.find().toArray()).reverse();
       res.send(result);
     });
   } finally {
