@@ -74,7 +74,7 @@ async function run() {
       const token = jwt.sign(
         { email: email },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1d" }
+        { expiresIn: "1h" }
       );
       res.send({ result, accessToken: token });
     });
@@ -112,13 +112,13 @@ async function run() {
     });
 
     // parts api
-    app.get("/parts", verifyJWT, async (req, res) => {
+    app.get("/parts", async (req, res) => {
       const result = (await partsCollection.find().toArray()).reverse();
       res.send(result);
     });
 
     //POST ORDER
-    app.post("/post-part", async (req, res) => {
+    app.post("/post-part", verifyJWT, async (req, res) => {
       const parts = req.body;
       const result = await partsCollection.insertOne(parts);
       res.send(result);
