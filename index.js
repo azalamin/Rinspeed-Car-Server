@@ -125,7 +125,7 @@ async function run() {
     });
 
     // Get Single part
-    app.get("/parts/:id", async (req, res) => {
+    app.get("/parts/:id", verifyJWT,  async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await partsCollection.findOne(query);
