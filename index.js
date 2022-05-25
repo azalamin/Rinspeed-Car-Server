@@ -58,7 +58,7 @@ async function run() {
     });
 
     // Store User Info
-    app.put("/user/:email", async (req, res) => {
+    app.put("/user/:email", verifyJWT, async (req, res) => {
       const email = req.params?.email;
       const user = req.body;
       const filter = { email: email };
@@ -90,7 +90,7 @@ async function run() {
     });
 
     // SIngle user api
-    app.get("/user/:email", async (req, res) => {
+    app.get("/user/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const result = await userCollection.findOne(query);
@@ -112,7 +112,7 @@ async function run() {
     });
 
     // parts api
-    app.get("/parts", async (req, res) => {
+    app.get("/parts", verifyJWT, async (req, res) => {
       const result = (await partsCollection.find().toArray()).reverse();
       res.send(result);
     });
@@ -125,7 +125,7 @@ async function run() {
     });
 
     // Get Single part
-    app.get("/parts/:id", verifyJWT,  async (req, res) => {
+    app.get("/parts/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await partsCollection.findOne(query);
