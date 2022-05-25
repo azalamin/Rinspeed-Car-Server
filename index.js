@@ -131,14 +131,6 @@ async function run() {
       res.send(result);
     });
 
-    //* orders api //
-    //POST ORDER
-    app.post("/orders", async (req, res) => {
-      const order = req.body;
-      const result = await orderCollection.insertOne(order);
-      res.send(result);
-    });
-
     // UPDATE PAYMENT
     app.patch("/payment-update/:id", async (req, res) => {
       const payment = req.body;
@@ -154,6 +146,36 @@ async function run() {
         updateDoc,
         options
       );
+      res.send(result);
+    });
+
+    // Place order to shipped
+    app.patch("/confirm-order/:id", async (req, res) => {
+      const { id } = req.params;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = {
+        $set: { status: "shipped" },
+      };
+      const options = { upsert: true };
+      const result = await orderCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
+
+    //* orders api //
+    //POST ORDER
+    app.post("/orders", async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.send(result);
+    });
+
+    // Get All Orders
+    app.get("/get-orders", async (req, res) => {
+      const result = (await orderCollection.find().toArray()).reverse();
       res.send(result);
     });
 
