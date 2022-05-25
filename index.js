@@ -58,7 +58,7 @@ async function run() {
     });
 
     // Store User Info
-    app.put("/user/:email", verifyJWT, async (req, res) => {
+    app.put("/user/:email", async (req, res) => {
       const email = req.params?.email;
       const user = req.body;
       const filter = { email: email };
@@ -106,7 +106,7 @@ async function run() {
     });
 
     // Get Users
-    app.get("/user", async (req, res) => {
+    app.get("/user", verifyJWT, async (req, res) => {
       const result = (await userCollection.find().toArray()).reverse();
       res.send(result);
     });
