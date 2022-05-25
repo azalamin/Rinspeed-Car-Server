@@ -124,6 +124,7 @@ async function run() {
       res.send(result);
     });
 
+    // Get Single part
     app.get("/parts/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -131,7 +132,15 @@ async function run() {
       res.send(result);
     });
 
-    // UPDATE PAYMENT
+    // DELETE Single part
+    app.delete("/delete-part/:partId", async (req, res) => {
+      const { partId } = req.params;
+      const filter = { _id: ObjectId(partId) };
+      const result = await partsCollection.deleteOne(filter);
+      res.send(result);
+    });
+
+    // MAKE PAYMENT
     app.patch("/payment-update/:id", async (req, res) => {
       const payment = req.body;
       const { id } = req.params;
