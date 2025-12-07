@@ -5,7 +5,7 @@
 	"main": "server.js",
 	"scripts": {
 		"start": "node server.js",
-		"start-dev": "nodemon server.js",
+		"start-dev": "nodemon",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
@@ -20,6 +20,6 @@
 		"stripe": "^9.2.0"
 	},
 	"devDependencies": {
-		"nodemon": "^2.0.16"
+		"nodemon": "^2.0.22"
 	}
 }

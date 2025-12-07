@@ -1,19 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const verifyJWT = require("../../middleware/verifyJWT.js");
-const controller = require("./user.controller.js");
+const controller = require("./user.controller");
+const verifyJWT = require("../../middleware/verifyJWT");
 
 module.exports = (db) => {
-    router.put("/:email", (req, res) => controller.upsertUser(req, res, db));
 
+    // Check if user is admin
+    router.get("/admin/:email", verifyJWT, async (req, res) => {
+        const email = req.params.email;
+        const user = await db.collection("user").findOne({ email });
+
+        res.send({ admin: user?.role === "admin" });
+    });
+
+
+    // Get user info
     router.get("/:email", verifyJWT, (req, res) =>
         controller.getUser(req, res, db)
     );
 
-    router.get("/", (req, res) => controller.getAllUsers(req, res, db));
-
-    router.put("/admin/:email", (req, res) =>
-        controller.makeAdmin(req, res, db)
+    // Update user
+    router.put("/:email", verifyJWT, (req, res) =>
+        controller.updateUser(req, res, db)
     );
 
     return router;
